@@ -1,4 +1,4 @@
-# work
+# Study Notes
 Repo for building my skill stacks
 
 ## Basics
