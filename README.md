@@ -1,2 +1,2 @@
 # work
-Repo for organize my work and study inspiration.
+Repo for building my skill stacks
