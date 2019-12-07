@@ -4,6 +4,7 @@ Repo for building my skill stacks
 ## Basics
 
 ### Computer System
+1. [Computer Systems: A Programmer's Perspective](https://www.goodreads.com/book/show/829182)
 ### Operating Systems
 ### Compilers
 ### Network
