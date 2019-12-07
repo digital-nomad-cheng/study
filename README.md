@@ -15,7 +15,7 @@ Repo for building my skill stacks
 ### Python
 ### C
 ### C++
-1. [C++ concurrency in Action](https://www.goodreads.com/book/show/6813247-c-concurrency-in-action)
+1. [C++ concurrency in Action](https://www.goodreads.com/book/show/6813247)
 ### Objective-C
 ### Swift
 
