@@ -1,13 +1,13 @@
 # Study Notes
 Repo for building my basci computer science skill stacks
 
-## Basics
 
-### Computer System
+
+## Computer System
 1. [Computer Systems: A Programmer's Perspective](https://www.goodreads.com/book/show/829182)
-### Operating Systems
-### Compilers
-### Network
+## Operating Systems
+## Compilers
+## Network
 
 
 
