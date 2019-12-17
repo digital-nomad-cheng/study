@@ -117,6 +117,70 @@ This question is interesting
 |  step2  |  b   | a^b  |
 |  step3  |  b   |  a   |
 
+2.11 
+
+A. first = last = k
+
+B. a^a = 0
+
+C. first < last
+
+2.12 
+
+A. x&0xFF
+
+B. ~(x & (1-0xFF)) | (x&0xFF)
+
+C. x | 0xFF
+
+2.13
+
+````c
+/* Declarations of functions implementing operations bis and bic */
+int bis(int x, int m);
+int bic(int x, int m);
+
+// x 0100
+// y 1101
+// result 1101
+int bool_or(int x, int y) {
+  // result 1101 
+  int result = bis(x, y);
+  result = bis(result, x);
+  // result 1101
+  return result;
+}
+
+
+// result 1001
+int bool_xor(int x, int y) {
+  // result 1101
+  int result = bool_or(x, y);
+  // and 0100
+  int and = bic(x, y);
+  // result 1001
+  result = bis(result, and)
+ 	return x;
+}
+````
+
+2.14
+
+0x66 &rarr; 0110 0110
+
+0x39 &rarr; 0011 1001
+
+~x = 1001 1001
+
+~y = 1100 0110
+
+| Expression | Value | Expression | Value |
+| :--------: | :---: | :--------: | :---: |
+|    x&y     | 0x20  |    x&&y    | 0x01  |
+|    x\|y    | 0x7F  |   x\|\|y   | 0x01  |
+|  ~x \| ~y  | 0xDF  | ~x \|\| ~y | 0x01  |
+|    x&!y    | 0x00  |   x&&~y    | 0x01  |
+
 2.15
 
 !(x^y)
@@ -143,6 +207,18 @@ This question is interesting
 
 2.18
 
+|  Hex  | Decimal |
+| :---: | :-----: |
+| 0x2e0 |   736   |
+| -0x58 |   -88   |
+| 0x28  |   40    |
+| -0x30 |   -48   |
+| 0x78  |   120   |
+| 0x88  |   136   |
+| 0x1f8 |   504   |
+| 0xc0  |   192   |
+| -0x48 |   -72   |
+
 2.19
 
 |  x   | T2U_4(x) |
@@ -158,9 +234,61 @@ This question is interesting
 
 2.21
 
+| Expression | Type | Evaluation |
+| :--------: | :--: | :--------: |
+|            |      |            |
+|            |      |            |
+|            |      |            |
+|            |      |            |
+|            |      |            |
 
+2.22 
 
+Simple
 
+2.23
 
+A.
 
+|      w      |   fun1(w)   |   fun2(w)   |
+| :---------: | :---------: | :---------: |
+| 0x0000 0076 | 0x0000 0076 | 0x0000 0076 |
+| 0x8765 4321 | 0x0000 0021 | 0x0000 0021 |
+| 0x0000 00C9 | 0x0000 00C9 | 0xFFFF FFC9 |
+| 0xEDCB A987 | 0x0000 0087 | 0xFFFF FF87 |
+
+B. func1 extracts low-order 8 bits values of the argument, the range of the result should be 0 ~ 255
+
+```c++
+func2 extracts low-order 8 bits values of the argument too, if alse performs signed extension, the result will be a number between -128 and 127
+```
+
+2.27
+
+```c
+int uadd_ok(unsigned x, unsigned y) {
+  unsigned z = x + y;
+  if (z>x || z >y) {
+    return -1;
+  }
+  else {
+    return 1;
+  }
+}
+```
+
+2.30
+
+```c
+int tadd_ok(int x, int y) {
+	int z = x +y;
+  if (x < 0 && y < 0 && z <= 0) {
+    return -1;
+  }
+  else if (x > 0 && y > 0 && z>=0) {
+    return -1;
+  }
+  return 1;
+}
+```
 
