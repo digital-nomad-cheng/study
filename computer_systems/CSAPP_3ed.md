@@ -326,6 +326,107 @@ A. 0.0001 1001 1001 1001 1001 1010
 | 110 1111 | 31/2  |          |       |
 | 000 0001 | 1/64  |          |       |
 
+## Chap03
+
+3.5
+
+```c
+void decode1(long *xp, long *yp, long *zp) {
+  long temp1 = *yp;
+  *yp = *xp;
+  *xp = *zp;
+  *zp = temp1;
+}
+```
+
+3.6
+
+|         expression          | Result |
+| :-------------------------: | :----: |
+|     leap 6 (%rax), %rdx     | x + 6  |
+|   leap (%rax, %rcx), %rdx   |  x+y   |
+| leap (%rax, %rcx, 4), %rdx  |  x+4y  |
+| leap 7(%rax, %rax, 8), %rdx |  9x+7  |
+|  leap 0xA(, %rcx, 4), %rdx  | 4y+10  |
+| Leap 9(%rax, %rcx, 2), %rdx | x+2y+9 |
+
+3.7
+
+`long t = 5x + 2y + 8z`
+
+3.8
+
+|        instruction        | destination | value |
+| :-----------------------: | :---------: | :---: |
+|     add %rcx, (%rax)      |    0x100    | 0x100 |
+|    subq %rdx, 8(%rax)     |    0x108    | 0xA8  |
+| imulq $16 (%rax, %rdx, 8) |    0x118    | 0x110 |
+|      incq 16 (%rax)       |    0x110    | 0x14  |
+|         decq %rcx         |    %rcx     |  0x0  |
+|      subq %rdx, %rax      |    %rax     | 0xFD  |
+
+3.9
+
+```
+salq 4, %rax
+
+sarq %ecx, %rax 
+```
+
+3.10
+
+````
+long arith2(long x, long y, long z)
+{
+  long t1 = x | y;
+  long t2 = t1 >> 3;
+  long t3 = ~t2;
+  lont t4 = z - t3;
+}
+````
+
+3.11
+
+A. set %rdx to zero
+
+B. Move $0 %rdx
+
+C. 
+
+3.12
+
+```c++
+movq %rdx %r8
+movq %rdi %rax;
+movq $0 %rdx // or movel $0 %edx
+divq %rsi
+movq %rax (%r8) 
+movq %rdx (%rcx)
+ret
+```
+
+3.13
+
+A. int, a < b
+
+B. short >=
+
+C.unsigned char: <=
+
+D. long, unsigned long, !=
+
+3.14
+
+A. Long
+
+B. short, unsigned short
+
+C. unsigned char
+
+D. int, unsigned int
+
+3.15
+
 
 
 
