@@ -495,7 +495,151 @@ D. int, unsigned int
 
 3.15
 
+A. 0x02 + 0x400fc = 0x400f4
 
+B. 0xf4 + 0x400431 = 0x40025
+
+C. Pop = 0x400545
+
+​	Ja: 0x400543
+
+D. 0x400560
+
+3.16
+
+```
+void cond(long a, long *p)
+{
+	if (!p):
+		goto L1;
+	if (a>=*p):
+		goto L1;
+	movq %rdi, (%rsi)
+	L1:
+		rep, ret
+}
+```
+
+3.17
+
+```c++
+/*
+ t = test-expr;
+ if (t)
+ 	goto true;
+ else-statement
+ goto done;
+ true:
+ 	then-statement
+ done:
+ */
+
+long asbdiff_se(long x, long y)
+{
+  long result;
+  if (x<y):
+  	goto x_lt_y;
+ 	ge_cnt++;
+  result = x - y;
+  return result;
+ x_lt_y:
+  lt_cnnt++;
+  result = y -x;
+  return result
+}
+```
+
+3.18:
+
+```c++
+/*
+short test(short x, short y, short z)
+x in %rdi, y in %rsi, z in %rdx
+test:
+leaq (%rdx,%rsi), %rax 
+subq %rdi, %rax
+cmpq $5, %rdx
+jle .L2
+cmpq $2, %rsi
+jle .L3
+movq %rdi, %rax
+idivq %rdx, %rax
+ret
+.L3:
+movq %rdi, %rax 
+idivq %rsi, %rax 
+ret
+.L2:
+cmpq $3, %rdx 
+jge .L4
+movq %rdx, %rax 
+idivq %rsi, %rax
+.L4:
+rep; ret
+*/
+long test(long x, long y, long z)
+{
+	long val = x + y - z;
+  if (z > 5) {
+    if (y > 2) {
+      val = x / z;
+    } else {
+      val = x / y;
+    }
+  } else if (z < 3) {
+    val = z / y;
+  }
+  return val;
+}
+
+```
+
+3.19
+
+A. 30
+
+B. 46
+
+3.20
+
+/
+
+````c++
+x  >=0 ? x >> 3: (x+7) >> 3;
+````
+
+3.21 
+
+````c++
+long test(long x, long y)
+{
+	long val = 8*x;
+  if (y > 0) {
+  	if ( x > = y) {
+      val = x & y;
+    } else {
+      val = y - x;
+    }
+  } else if (y + 2 <=0) {
+    val = x + y;
+  }
+  return val;
+}
+````
+
+3.22 
+
+3.23
+
+```
+x: %rax
+y: %rcx
+z: %rdx
+
+leap 1(%rcx, %rax), %rax
+```
+
+3.24
 
 
 
