@@ -328,6 +328,74 @@ A. 0.0001 1001 1001 1001 1001 1010
 
 ## Chap03
 
+3.1 
+
+|     Operand     | Value |
+| :-------------: | :---: |
+|      %rax       | 0x100 |
+|      0x104      | 0xAB  |
+|     $0x108      | 0x108 |
+|     (%rax)      | 0xFF  |
+|     4(%rax)     | 0xAB  |
+|  9(%rax, %rdx)  | 0x11  |
+| 260(%rcx, %rdx) | 0x13  |
+| 0xFC(, %rcx, 4) | 0xFF  |
+| (%rax, %rdx, 4) | 0x11  |
+
+3.2
+
+movl
+
+movw
+
+movb
+
+movb
+
+movq
+
+movw
+
+3.3 
+
++ don't know
++ movq
++ cannot have both source and destination as meomory reference
++ No register as sl
++ cannot have immediate number as destination
++ destination register wrong size
++ movb should be movl
+
+3.4 
+
++ ````
+  movq (%rdi), %rax
+  movq %rax, (%rsi)
+  ````
+
++ ```
+  movsbl (%rdi) %eax
+  movl %eax, (%rsi)
+  ```
+
++ ```
+  movsbl (%rdi), %al
+  movsbl %al, (%rsi)
+  ```
+
++ ```
+  movb (%rdi), %al
+  mozbw %al, (%rsi)
+  ```
+
++ ```
+  movl (%rdi), %eax
+  movb %al, (%rsi)
+  ```
+
+  
+  
+
 3.5
 
 ```c
