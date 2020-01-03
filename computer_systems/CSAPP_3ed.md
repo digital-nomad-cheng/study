@@ -641,5 +641,277 @@ leap 1(%rcx, %rax), %rax
 
 3.24
 
+```c++
+long loop_while(long a, long b)
+{
+  long result = 1;
+    while (b < a) {
+      result = (a+b)*result;
+      a = a + 1;
+    }
+  return result
+}
+```
 
+3.25
+
+```c
+long loop_while2(long a, long b) 
+{
+	long result = b;
+	while( b ) {
+		result = a*result;
+		b = b - a;
+	}
+	return result;
+}
+```
+
+3.26
+
+A. jump to middle
+
+B.
+
+```c
+long fun_a(unsigned long x) {
+  long val = 0;
+  while (x>0) {
+    val = val ^ x;
+    x = x >> 1;
+  }
+  return 1 & val;
+}
+```
+
+C. 计算参数x奇偶性，奇数个1返回1, 偶数个1返回0
+
+3.27
+
+```c
+long fact_for_guarded_do_goto(long n)
+{
+  long i = 2;
+  long result = 1;
+  goto test;
+loop:
+	result *= i;
+  i++;
+test:
+  if (i<=n)
+    goto loop
+  return result;
+}
+```
+
+3.28
+
+A.
+
+```c
+long fun_b(unsgined long x) {
+	long val = 0;
+	long i;
+	for (i=64; i < !=0; i--) {
+		val = (val << 1) || (x & ox01);
+		x >> 1;
+	}
+	return val;
+}
+```
+
+3.29
+
+3.30
+
+A. 
+
+x = -1
+
+max = -1 + 8 = 7
+
+-1, 0, 1, 2, 4, 5, 7
+
+B. 
+
+.L5: 0, 7
+
+.L7: 2, 4
+
+3.31
+
+```c
+void switcher(long a, long b, long c, long *dest)
+{
+  long val;
+  switch(a) {
+    case 5:
+        c = b ^ 15;
+    case 0:
+        val = c+112;
+      	break;
+    case 4:
+        val = a;
+        break;
+    case 2:
+    case 7:
+      	val = (c+b) << 2;
+        break;
+    default:
+      val = b;
+  }
+  *dest = val;
+}
+```
+
+3.32
+
+3.33
+
+```
+int procprob(int a, short b, long *u, char *v)
+```
+
+3.34
+
+```
+9 movq %rdi %rbx: move x -> %rbx
+
+A:called: x+1, x+2, x+3, x+4, x+5
+B:stack: x+6, x+7
+C: used up alled the callee save registers, 
+there are only 6 callee save registers
+```
+
+3.35
+
+```
+A: x
+B: 
+long rfun(unsigned long x)
+{
+	if (x==0) 
+		return 0;
+	unsigned long nx = x >> 2;
+	long rv = rfun(nx);
+	return rv + x;
+}
+```
+
+3.36
+
+```
+S | 2 bytes | 14 bytes | xs | xs+2*i|
+T | 8 bytes | 24 bytes | xt | xs+8*i|
+U | 8 bytes | 48 bytes | xu | xu+8*i|
+V | 4 bytes | 32 bytes | xv | xv+4*i|
+W | 8 bytes | 32 bytes | xw | xw+8*i|
+```
+
+3.37
+
+```
+	s+1   | short * | xs+2      | leaq 2(%rdx) %rax         |
+	s[3]  | short   | M[xs+2*3] | movew 6(%rdx)  %ax
+	&S[i] | short * | xs+2*i    | leaq (%rdx, %rcx, 2) %rax |
+S[4*i+1 | short   | M[xs+8*i+2]| movew 2(%rdx, %rcx, 2)  %ax|
+	S+i-5 | short * | xs+2i-10  | leaq -10(%rdx, %rcx, 2) %rax |
+```
+
+3.38
+
+```
+%rdi = i, %rsi = j
+%rdx = 8i
+%rdx = 8i - i = 7i
+%rdx = j + 7i
+%rax = j + 4j = 5j
+%rdi = i + 5j
+
+%rdx = 8(i+5j)
+
+M = 5, N = 7
+```
+
+3.39
+
+```
+%rdi+16*4*i = xA + 64i
+%rsi+4*%rcx = xB + 4k
+xB + 4k + 16*16*4 = xB + 4k + 1024
+```
+
+3.40
+
+3.41
+
+```
+A.
+p: 0 bytes
+s.x: 8 bytes
+s.y: 12 bytes
+next: 20
+
+B.
+24 bytes
+C.
+
+void sp_init(struct prob *sp)
+{
+    sp->s.x = sp->s.y;
+    sp->p = &(sp->s.y);
+    sp->next = sp; 
+}
+```
+
+3.42
+
+```
+long fun(struct ELE *ptr)
+{
+    long val = 0;
+    while (ptr!=NULL) {
+        val += ptr->v;
+        ptr = ptr->p;
+    }
+    return val;
+}
+```
+
+3.43
+
+3.44
+
+```
+整体对齐按照最大的那个元素决定
+A.
+struct P1(int i; char c; int j; char d;};
+0, 4, 8, 12
+16 bytes in total
+4 bytes alignment
+B. struct P2(int i; char c; char d; long j;};
+0, 4, 5, 8
+16 bytes in total
+8 bytes alignment
+```
+
+3.45
+
+```
+A.
+a: 0
+b: 8
+c: 16
+d: 24
+e: 32
+f: 36
+g: 40
+h: 48
+
+B. 
+56 bytes in total
+
+C.
+larger elements first then smaller elements
+```
 
