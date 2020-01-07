@@ -915,3 +915,51 @@ C.
 larger elements first then smaller elements
 ```
 
+3.46
+
+A.
+
+```c++
+line0 00 00 00 00 00 40 00 76
+line1 01 23 45 67 89 AB CD EF
+line2
+line3 											 buf = %rsp
+line4
+```
+
+B.
+
+```c++
+line0 00 00 00 00 00 40 00 34 return address
+line1 33 32 31 30 39 38 37 36
+line2 35 34 33 32 32 30 39 38
+line3 37 36 35 34 33 32 31 30	buf = %rsp
+line4
+```
+
+C.
+
+return to address: 0x400034
+
+D.
+
+register %rbx is overwritten
+
+3.47
+
+A. 32 bytes = 2^13 addresses
+
+B. 2^6
+
+3.48
+
+```
+unprotected v: %rsp 24 buf: %rsp 
+protected canary %rsp bias 40 v: %rsp bias 8 buff: %rsp bias 16 
+In the protected code, local variable v is positioned closer to the top of the stack than buf, and so an overrun of buf will not corrupt the value of v.```
+```
+
+
+
+
+
