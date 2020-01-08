@@ -961,5 +961,135 @@ In the protected code, local variable v is positioned closer to the top of the s
 
 
 
+## Chap06
 
+1. row choose and col choose use the same pins
+
+   |  size  |  r   |  c   |  bc  |  br  | max(br, bc) |
+   | :----: | :--: | :--: | :--: | :--: | :---------: |
+   |  16x1  |  4   |  4   |  2   |  2   |      2      |
+   |  16x4  |  4   |  4   |  2   |  2   |      2      |
+   | 128x8  |  16  |  8   |  4   |  3   |      4      |
+   | 512*4  |  32  |  16  |  5   |  4   |      5      |
+   | 1024*4 |  32  |  32  |  5   |  5   |      5      |
+
+2. 
+
+   4x10000x400x512 = 8 192 000 000 = 8.192 GB
+
+3.  
+
+   $T_{total} = T_{seek} + T_{rotate} + T_{transfer} = 8 + 1/2*(60/15000)*1000+(60/15000)*(1/500)*1000 = 10ms$
+
+4. T_maxrotate = 6ms
+
+   5 + 3 + 2*6 = 20ms
+
+5. Pass
+
+6. Pass
+
+7.  
+
+   ```c
+   int sumarray3d(int a[N][N][N])
+   {
+     int i, j, k, sum = 0;
+     for (i = 0; i < N; i++) {
+       for (j = 0; j < N; j++) {
+         for (k = 0; k < N; k++) {
+           sum += a[i][j][k]
+         }
+       }
+     }
+     return sum
+   }
+   ```
+
+8. Clear1: stride 4*6
+
+   Clear2: stride 4*3
+
+   Clear3: stride Non spatial localiity
+
+   Clear2 > clear1 > clear3
+
+9. 
+
+| cache |  m   |  C   |  B   |  E   |  S   |  t   |  s   |  b   |
+| :---: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+|   1   |  32  | 1024 |  4   |  1   | 256  |  22  |  8   |  2   |
+|   2   |  32  | 1024 |  8   |  4   | 128  |  22  |  7   |  3   |
+|   3   |  32  | 1024 |  32  |  32  |  32  |  22  |  5   |  5   |
+
+6.12
+
+```
+12～5: tag
+
+4~2: set index
+
+1～0: block offset
+```
+
+6.13
+
+```
+0 1110 0011 0100
+
+CO: 0
+CI: 5
+CT: 71
+YES: 06
+```
+
+6.14
+
+```
+0 1101 1101 0101
+CO: 1
+CI: 5
+CT: 6E
+NO
+valid bit is zero
+```
+
+6.15
+
+```
+1 1111 1110 0100
+CO: 0 
+CI: 1
+CT: FF
+NO
+miss
+```
+
+6.18
+
+A. 16x16x4x2 = 2048
+
+B. 1024
+
+C 50%
+
+6.19
+
+A.2048
+
+B. 1024
+
+C. 50%
+
+D. 25%
+
+6.20
+
+A. 2048
+
+B. 512
+
+C. 25%
+
+D. 25%
 
