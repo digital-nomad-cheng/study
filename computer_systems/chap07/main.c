@@ -1,11 +1,13 @@
-int sum(int *a, int n);
-int array[2] = {1, 2};
+#include <stdio.h>
+#include "vector.h"
+
+int x[2] = {1, 2};
+int y[2] = {3, 4};
+int z[2];
 
 int main()
 {
-    int val = sum(array, 2);
-    return val;
+    addvec(x, y, z, 2);
+    prinft("z = [%d %d]\n", z[0], z[1]);
+    return 0;
 }
-
-
-    
