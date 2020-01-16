@@ -963,7 +963,7 @@ In the protected code, local variable v is positioned closer to the top of the s
 
 ## Chap06
 
-1. row choose and col choose use the same pins
+6.1 row choose and col choose use the same pins
 
    |  size  |  r   |  c   |  bc  |  br  | max(br, bc) |
    | :----: | :--: | :--: | :--: | :--: | :---------: |
@@ -973,23 +973,23 @@ In the protected code, local variable v is positioned closer to the top of the s
    | 512*4  |  32  |  16  |  5   |  4   |      5      |
    | 1024*4 |  32  |  32  |  5   |  5   |      5      |
 
-2. 
+6.2 
 
    4x10000x400x512 = 8 192 000 000 = 8.192 GB
 
-3.  
+6.3  
 
    $T_{total} = T_{seek} + T_{rotate} + T_{transfer} = 8 + 1/2*(60/15000)*1000+(60/15000)*(1/500)*1000 = 10ms$
 
-4. T_maxrotate = 6ms
+6.4 T_maxrotate = 6ms
 
    5 + 3 + 2*6 = 20ms
 
-5. Pass
+6.5 Pass
 
-6. Pass
+6.6 Pass
 
-7.  
+6.7  
 
    ```c
    int sumarray3d(int a[N][N][N])
@@ -1006,15 +1006,13 @@ In the protected code, local variable v is positioned closer to the top of the s
    }
    ```
 
-8. Clear1: stride 4*6
+6.8
+  clear1: stride 4*6
+  clear2: stride 4*3
+  clear3: stride Non spatial localiity
+  clear2 > clear1 > clear3
 
-   Clear2: stride 4*3
-
-   Clear3: stride Non spatial localiity
-
-   Clear2 > clear1 > clear3
-
-9. 
+6.9 
 
 | cache |  m   |  C   |  B   |  E   |  S   |  t   |  s   |  b   |
 | :---: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
@@ -1092,4 +1090,128 @@ B. 512
 C. 25%
 
 D. 25%
+
+## Chap07
+
+7.1
+
+| Symbol | .sysmtab？ |   type   | definition | Sector |
+| :----: | :--------: | :------: | :--------: | :----: |
+|  buf   |    yes     | External |   Main.o   | .data  |
+| bufp0  |    yes     |  global  |   Swap.o   | .data  |
+| bufp1  |    yes     |  global  |   Swap.o   | COMMON |
+|  swap  |    yes     |  global  |   swap.o   | .text  |
+|  Temp  |     no     |    -     |     -      |   -    |
+
+
+
+7.2
+
+A.
+
+REF(main.1) -> DEF(mian.1)
+
+REF(main.2) -> DEF(main.1)
+
+B.
+
+error
+
+C.
+
+REF(x.1) -> DEF(x.2)
+
+REF(x.2) -> DEF(x.2)
+
+7.3
+
+A.
+
+```
+gcc po.o libx.a
+```
+
+B.
+
+```
+gcc po.o libx.a liby.a
+```
+
+C.
+
+```
+gcc po.o libx.a liby.a libx.a
+```
+
+## Chap08
+
+## Chap09
+
+9.1
+
+| VM bits(n) | VM(N) | Maximum Virtual |
+| :--------: | :---: | :-------------: |
+|     8      |  32   |      32-1       |
+|     16     |  64K  |      61K-1      |
+|     32     |  4G   |      4G-1       |
+|     48     | 256T  |     256T-1      |
+|     64     |  16E  |      16E-1      |
+
+9.2
+
+|  n   | 2^p  | PTE  |
+| :--: | :--: | :--: |
+|  16  |  4K  |  16  |
+|  16  |  8K  |  8   |
+|  32  |  4K  | 2^20 |
+|  32  |  8K  | 2^19 |
+
+9.3
+
+|  p   | vpn  | vpo  | ppn  | ppo  |
+| :--: | :--: | :--: | :--: | :--: |
+| 1KB  |  22  |  10  |  14  |  10  |
+| 2KB  |  21  |  11  |  13  |  11  |
+| 4KB  |  20  |  12  |  12  |  12  |
+| 8KB  |  19  |  13  |  11  |  13  |
+
+9.4
+
+A.
+
+`00 0011 1101 0111`
+
+B.
+
+|   Parameter    | Value |
+| :------------: | :---: |
+|      VPN       |  0xf  |
+|    TLB索引     |  0x3  |
+|    TLB标记     |  0x3  |
+| TLB命中(是/否) |  YES  |
+|      缺页      |  NO   |
+|      PPN       |  0xD  |
+
+C:
+
+`0011 0101 0111`
+
+D:
+
+| Parameter  | Value |
+| :--------: | :---: |
+|    bias    |  0x3  |
+|   index    |  0x5  |
+|    tag     |  0xD  |
+|    Hit?    |  YES  |
+| Cache byte | 0x1D  |
+
+9.6
+
+|   request   | block | head |
+| :---------: | :---: | :--: |
+|  malloc(1)  |   1   |  0   |
+|  malloc(5)  |   5   |  1   |
+| malloc(12)  |  12   |  6   |
+| malloc(13） |  13   |  18  |
 
