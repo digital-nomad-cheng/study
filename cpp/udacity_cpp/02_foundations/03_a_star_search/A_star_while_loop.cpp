@@ -5,7 +5,6 @@
 #include <vector>
 #include <cmath>
 
-
 using namespace std;
 
 enum class State {kEmpty, kObstacle, kClosed, kPath, kStart, kFinish};
@@ -134,7 +133,7 @@ void expandNeighbors(vector<int> curnode, vector<vector<int>> &open_nodes,
     }
 }
 
-vector<vector<State>> search(vector<vector<State>> grid, int start[2], int goal[2])
+bool search(vector<vector<State>> &grid, int start[2], int goal[2])
 {
     cout << "Fine";
     vector<vector<int>> open{};
@@ -153,7 +152,13 @@ vector<vector<State>> search(vector<vector<State>> grid, int start[2], int goal[
         y = curnode[1];
         grid[x][y] = State::kPath;
         if (x == goal[0] && y == goal[1]) {
-            return grid;
+            return true;
+        } else {
+            expandNeighbors(curnode, open, grid, goal);
+        }
+        return true;
+    }
+    /*
         } else {
            // Todo: expand search to current node's neighbors
            expandNeighbors(curnode, open, grid, goal); 
@@ -161,19 +166,19 @@ vector<vector<State>> search(vector<vector<State>> grid, int start[2], int goal[
     } 
     
     cout << "No path found!" << "\n"; 
-    return std::vector<vector<State>>{};;
+    return false;
+    */
 }
 
 int main()
 {
-
     int start[2] = {0, 0};
     int goal[2] = {1, 1};
     vector<vector<State>> board = readBoardFile("1.board");
     printBoard(board);
-    // vector<vector<State>> solution = search(board, start, goal);
-    // printBoard(solution); 
+    cout << "hello" << endl;
+    bool result = search(board, start, goal);
+    if (result)
+        printBoard(board); 
     // return 0;
-
-
 }
