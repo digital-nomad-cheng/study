@@ -19,6 +19,7 @@ Repo for building my basci computer science skill stacks
 ### C
 ### C++
 1. [C++ concurrency in Action](https://www.goodreads.com/book/show/6813247)
+2. [Udacity C++ Nano Degree](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213)
 ### Objective-C
 ### Swift
 
