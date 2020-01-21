@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
 
@@ -28,7 +29,8 @@ vector<State> parseLine(string line)
     return row;
 }
 
-vector<vector<State>> readBoardFile(string path) {
+vector<vector<State>> readBoardFile(string path) 
+{
   ifstream myfile (path);
   vector<vector<State>> board{};
   if (myfile) {
@@ -76,7 +78,6 @@ bool compare(vector<int> first, vector<int> second)
     }
 }
 
-
 void cellSort(vector<vector<int>> *v) {
     sort(v->begin(), v->end(), compare);
 }
@@ -97,45 +98,44 @@ void addToOpen(int x, int y, int g, int h, vector<vector<int>> &open_nodes,
 bool  checkValidCell(int x, int y, vector<vector<State>> &grid)
 {
     int rows = grid.size();
+    
     int cols = grid[0].size();
-
-    if (x >= rows or y >= cols) {
-        // outside of the grid
-        return false;
+    
+    // check inside the grid
+    if (x < rows && y < cols && x >=0 && y >= 0) {
+        return grid[x][y] == State::kEmpty;
     }
 
-    if (grid[x][y] == State::kEmpty) {
-        return true;
-    }
     return false;
 }
 
-void expandNeighbors(vector<int> curnode, vector<vector<int>> &open_nodes,
+void expandNeighbors(const vector<int> &curnode, 
+                    vector<vector<int>> &open_nodes,
                      vector<vector<State>> &grid, int goal[2])
 {
     
     int x = curnode[0];
     int y = curnode[1];
+    int g = curnode[2];
     
     // loop through neighbors
     for (int i = 0; i < 4; i++) {
         int dx = delta[i][0];
         int dy = delta[i][1];
-        
+         
         int new_x = x + dx;
         int new_y = y + dy;
         if (checkValidCell(new_x, new_y, grid)) {
-            int new_g = curnode[2] + 1;
-            int new_f = heuristic(new_x, new_y, goal[0], goal[2]);
-            // open_nodes.push_back(vector<int> {new_x, new_y, new_g, new_f});
-            addToOpen(new_x, new_y, new_g, new_f, open_nodes, grid);
+            int new_g = g + 1;
+            int new_h = heuristic(new_x, new_y, goal[0], goal[1]);
+            addToOpen(new_x, new_y, new_g, new_h, open_nodes, grid);
         }
     }
 }
 
-bool search(vector<vector<State>> &grid, int start[2], int goal[2])
+vector<vector<State>> search(vector<vector<State>> &grid, int start[2], 
+                            int goal[2])
 {
-    cout << "Fine";
     vector<vector<int>> open{};
      
     int x = start[0];
@@ -152,33 +152,25 @@ bool search(vector<vector<State>> &grid, int start[2], int goal[2])
         y = curnode[1];
         grid[x][y] = State::kPath;
         if (x == goal[0] && y == goal[1]) {
-            return true;
+            grid[start[0]][start[1]] = State::kStart;
+            grid[goal[0]][goal[1]] = State::kFinish;
+            return grid;
         } else {
             expandNeighbors(curnode, open, grid, goal);
         }
-        return true;
     }
-    /*
-        } else {
-           // Todo: expand search to current node's neighbors
-           expandNeighbors(curnode, open, grid, goal); 
-        }
-    } 
-    
-    cout << "No path found!" << "\n"; 
-    return false;
-    */
+    cout << "No path found" << "\n";
+    return vector<vector<State>>{};
 }
 
 int main()
 {
     int start[2] = {0, 0};
-    int goal[2] = {1, 1};
+    int goal[2] = {4, 5};
     vector<vector<State>> board = readBoardFile("1.board");
     printBoard(board);
-    cout << "hello" << endl;
-    bool result = search(board, start, goal);
-    if (result)
-        printBoard(board); 
+    vector<vector<State>> result = search(board, start, goal);
+    
+    printBoard(result); 
     // return 0;
 }
