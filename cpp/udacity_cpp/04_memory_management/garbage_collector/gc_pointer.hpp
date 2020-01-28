@@ -93,7 +93,8 @@ public:
 template <class T, int size>
 std::list<PtrDetails<T> > Pointer<T, size>::ref_container;
 template <class T, int size>
-bool Pointer<T, size>::first = true;
+bool Pointer<T, size>::first = true; // used to register a shut down function 
+                                     // when the program ends
 
 // Constructor for both initialized and uninitialized objects. 
 // see class interface
@@ -107,7 +108,6 @@ Pointer<T, size>::Pointer(T *t){
     // Lab: Smart Pointer Project Lab
     typename std::list<PtrDetails<T>>::iterator p;
     p = findPtrInfo(t);
-
     if (p != ref_container.end())
         p->ref_count++;
     else {
@@ -335,7 +335,8 @@ Pointer<T, size>::findPtrInfo(T *ptr){
     return p;
 }
 
-// Clear ref_container when program exits.
+// Clear ref_container when program exits. Release any memory that was prevented
+// from being released because of a cicular reference
 template <class T, int size>
 void Pointer<T, size>::shutDown(){
     if (ref_container_size() == 0)
