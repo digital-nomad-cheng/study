@@ -63,7 +63,7 @@ std::vector<std::shared_ptr<Street>> Intersection::queryStreets(
     std::vector<std::shared_ptr<Street>> outgoings;
     for (auto it : _streets)
     {
-        // ... except the street making the inquiry 
+        // outgoing streets are streets except the street making the inquiry 
         if (incoming->getID() != it->getID()) 
         {
             outgoings.push_back(it);
