@@ -26,9 +26,13 @@ void Graphics::loadBackgroundImg()
 
     // load image and create copy to be used for semi-transparent overlay
     cv::Mat background = cv::imread(_bgFilename);
-    _images.push_back(background);         // first element is the original background
-    _images.push_back(background.clone()); // second element will be the transparent overlay
-    _images.push_back(background.clone()); // third element will be the result image for display
+    
+    // first element is the original background
+    _images.push_back(background); 
+    // second element is the transparent overlay
+    _images.push_back(background.clone());
+    // third element is the result image for display 
+    _images.push_back(background.clone()); 
 }
 
 void Graphics::drawTrafficObjects()
@@ -46,25 +50,32 @@ void Graphics::drawTrafficObjects()
         if (it->getType() == ObjectType::objectIntersection)
         {
             // cast object type from TrafficObject to Intersection
-            std::shared_ptr<Intersection> intersection = std::dynamic_pointer_cast<Intersection>(it);
+            std::shared_ptr<Intersection> intersection = 
+                                    std::dynamic_pointer_cast<Intersection>(it);
 
-            // set color according to traffic light and draw the intersection as a circle
-            cv::Scalar trafficLightColor = intersection->trafficLightIsGreen() == true ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255);
-            cv::circle(_images.at(1), cv::Point2d(posx, posy), 25, trafficLightColor, -1);
+            // set color according to traffic light 
+            // and draw the intersection as a circle
+            cv::Scalar trafficLightColor = intersection->trafficLightIsGreen() 
+                        == true ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255);
+            cv::circle(_images.at(1), cv::Point2d(posx, posy), 25, 
+                       trafficLightColor, -1);
         }
         else if (it->getType() == ObjectType::objectVehicle)
         {
             cv::RNG rng(it->getID());
             int b = rng.uniform(0, 255);
             int g = rng.uniform(0, 255);
-            int r = sqrt(255*255 - g*g - r*r); // ensure that length of color vector is always 255
-            cv::Scalar vehicleColor = cv::Scalar(b,g,r);
-            cv::circle(_images.at(1), cv::Point2d(posx, posy), 50, vehicleColor, -1);
+            // ensure that length of color vector is always 255
+            int r = sqrt(255*255 - g*g - r*r); 
+            cv::Scalar vehicleColor = cv::Scalar(b, g, r);
+            cv::circle(_images.at(1), cv::Point2d(posx, posy), 50, vehicleColor,
+                       -1);
         }
     }
 
     float opacity = 0.85;
-    cv::addWeighted(_images.at(1), opacity, _images.at(0), 1.0 - opacity, 0, _images.at(2));
+    cv::addWeighted(_images.at(1), opacity, _images.at(0), 1.0 - opacity, 0,
+                    _images.at(2));
 
     // display background and overlay image
     cv::imshow(_windowName, _images.at(2));
