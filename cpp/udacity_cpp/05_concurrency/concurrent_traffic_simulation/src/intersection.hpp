@@ -6,6 +6,7 @@
 #include <mutex>
 #include <memory>
 #include "traffic_object.hpp"
+#include "traffic_light.hpp"
 
 // forward declarations to avoid include cycle
 class Street;
@@ -60,6 +61,7 @@ private:
     WaitingVehicles _waitingVehicles; 
     // flag indicating wheter the intersetion is blocked by a vehicle
     bool _isBlocked; 
+    TrafficLight _traffic_light;
 };
 
 #endif
