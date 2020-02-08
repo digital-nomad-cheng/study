@@ -118,7 +118,6 @@ void createTrafficObjects_NYC(std::vector<std::shared_ptr<Street>> &streets,
 int main()
 {
     /* PART 1 : Set up traffic objects */
-
     // create and connect intersections and streets
     std::vector<std::shared_ptr<Street>> streets;
     std::vector<std::shared_ptr<Intersection>> intersections;
@@ -129,7 +128,6 @@ int main()
                                nVehicles);
 
     /* PART 2 : simulate traffic objects */
-
     // simulate intersection
     std::for_each(intersections.begin(), intersections.end(), 
         [](std::shared_ptr<Intersection> &i) {
