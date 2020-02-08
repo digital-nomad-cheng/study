@@ -102,9 +102,9 @@ void TrafficLight::cycleThroughPhases()
                     // std::cout << "green to red" << std::endl;
                     break;
             }
-            // _message_queue.send(std::move(_current_phase));
             start = std::chrono::system_clock::now();
             cycle_duration = distribution(eng);
+            // _message_queue->send(std::move(_current_phase));
             auto msg = _current_phase;
             auto is_sent = std::async( std::launch::async, &MessageQueue<TrafficLightPhase>::send, _message_queue, std::move(msg) );
             is_sent.wait();
