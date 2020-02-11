@@ -1,0 +1,300 @@
+/** \file gc_ptr.dox
+
+\mainpage MeixnerGC
+<center>
+Version 1.0\n
+Copyright (C) 2017 Dr. Matthias Meixner\n
+meixner@users.sourceforge.net\n
+</center>
+
+\section prog Programming Guide
+\subsection intro Introduction
+MeixnerGC implements a smart pointer class for C++11 that uses mark and sweep to support
+garbage collection of cyclic data structures.
+
+The smart pointer can be used for all types of dynamic objects, they do not have to be
+prepared for use by the smart pointer. Both simple objects and arrays are supported.
+
+The garbage collector invokes the destructor when objects are released. This allows
+mixing garbage collected code with non-collected code.
+
+MeixnerGC supports thread. Thread safety of gc_ptr<> is comparable to shared_ptr<>.
+
+\subsection port Portability
+MeixnerGC only uses plain C++11 and does not depend on any OS specific calls.
+Therefore, it should be possible to use it on any platform with a standards compliant
+C++11 compiler.
+
+\subsection compile Compiling MeixnerGC
+
+\code
+make all
+\endcode
+
+This will compile both a static library and shared library for use, but it is also possible
+to simply add gc_ptr.cxx to the list of source files of your project.
+
+\code
+make install
+\endcode
+
+This will install the include file in \$(PREFIX)/include and the libs in \$(LIBPREFIX). PREFIX
+defaults to /usr and LIBPREFIX defaults to \$(PREFIX)/lib.
+To install it to another location like e.g. /usr/local, set PREFIX like this:
+
+\code
+make install PREFIX=/usr/local
+\endcode
+
+
+\code
+make unittest
+\endcode
+This runs a unit test to check whether all features work on your platform as expected.
+
+
+\subsection programming Programming
+New objects must be allocated using make_gc<>() for use with the smart pointer.
+make_gc<>() comes in two flavours:
+
+- Allocating single objects:\n
+  \link make_gc::make_gc() make_gc<T>(...)\endlink\n
+  The parameters are forwarded to the constructor of the respective type.
+
+- Allocating arrays:\n
+  \link make_gc<T[]>::make_gc() make_gc<T[]>(size)\endlink\n
+  \a size determines the size of the array.
+
+Example:
+\code
+   gc_ptr<A> a=make_gc<A>("foobar"); // allocate A and invoke A::A("foobar")
+
+   gc_ptr<A> b=make_gc<A[]>(10);     // allocate array of A size 10
+\endcode
+
+
+The following example shows how gc_ptr and the garbage collector should be
+used:
+
+\code
+#include <stdio.h>
+#include "gc_ptr.h"
+
+using namespace mxgc;
+
+class A {
+ public:
+   gc_ptr<A> next;
+   A() { printf("construct A\n"); }
+   virtual ~A() { printf("destruct A\n"); }
+};
+
+class B: public A {
+ public:
+   B() { printf("construct B\n"); }
+   ~B() { printf("destruct B\n"); }
+};
+
+int main()
+{
+   gc_ptr<B> b=make_gc<B>(); // allocate object
+   gc_ptr<A> a=b;            // automatic cast
+
+   gc_ptr<B> b2;
+   b2=pointer_cast<B>(a);              // replacement for C-style cast
+   b2=static_pointer_cast<B>(a);       // replacement for static_cast
+   b2=dynamic_pointer_cast<B>(a);      // replacement for dynamic_cast
+   b2=reinterpret_pointer_cast<B>(a);  // replacement for reinterpret_cast
+   gc_ptr<const A> a2;
+   a2=const_pointer_cast<const A>(a);  // replacement for const_cast
+
+}
+\endcode
+
+More usage examples can be found in the unit test gc_test.cxx.
+
+
+\subsubsection castop Cast operators
+gc_ptr<>() implements the cast operators known from shared_ptr:
+
+- static_pointer_cast
+- dynamic_pointer_cast
+- const_pointer_cast
+
+In addition it implements
+- reinterpret_pointer_cast
+- pointer_cast
+
+They are provided as replacement for reinterpret_cast and for C-style casts.
+
+\subsubsection gc_int GC Interface
+Garbage collection happens transparently to the user, so no actions are required
+to trigger a garbage collection. However, if for some reasons a garbage collection
+should be triggered manually (e.g. due to low memory), this can be achieved by
+calling:
+
+void gc_collect()
+
+\subsubsection lim Limitations
+MeixnerGC considers all smart pointers to belong to the root set that are found on
+the stack, in global data and within objects not managed by MeixnerGC. Therefore, it does
+not clean up cycles across different pointer types. For example: Object A has
+a shared_ptr<> to B which has a gc_ptr<> back to A. This will not be cleaned up as
+B is not managed by MeixnerGC and, therefore, the pointer within it is considered
+to belong to the root set, which prevents cleanup of A.
+
+
+\subsection intop Internal Operation
+MeixnerGC uses a combination of reference counting and mark and sweep for garbage
+collection: Smart pointers on the stack, in global data and within objects, that are not managed by MeixnerGC
+are considered to belong to the root set of pointers and are the starting point for the garbage collection.
+Instead of keeping track of these pointers, references from pointers from the root set are counted.
+The garbage collector starts with objects that have a reference count >0. These
+are marked as in use and added to the set of objects to be processed. Then pointers within
+these objects are examined and the objects these pointers point to and that are not already
+marked are also marked and added to the set. When examined objects are removed from the set.
+When the set has become empty all alive objects have been marked and all non-marked objects
+are considered garbage and are released.
+
+For this schemes the following information is required:
+ - Whether a pointer belongs to the root set or whether it belongs to an allocated object
+ - Which pointers live within an allocated object
+ - Which allocated objects exist.
+ .
+MeixnerGC uses the following strategy to find the pointers of the root set:
+ - When a new object is allocated, just before the constructor is called,
+   information about its start and end address is written to a thread local
+   variable.
+ - If an object contains gc_ptr pointers, the gc_ptr constructor is called.
+ - When a smart pointer is constructed, it checks the thread local variable
+   to see if it lives within the allocated region.
+ - If it lives within, then it does not belong to the root set, if it lives
+   outside, it belongs to the root set.
+ .
+gc_ptr pointers that do not belong to the root set register themselves with the object they live in.
+
+All allocated objects are tracked in a global array, for use by the garbage collector.
+
+The following example sums up the data structures in use.
+
+\diafile gc_ptr.dia
+
+\subsection compare Comparison with other solutions
+
+\subsubsection manual Manual garbage collection
+Using manual garbage collection the programmer explicitely releases allocated memory using delete or delete[].
+Therefore, the programmer needs to know whether objects are still in use or can be released.
+While this may be easy in case of simple data structures, this can be a hard task in case of
+complicated data structures.
+
+Manual garbage collection is fast and has about 5-times the performance of MeixnerGC.
+While this may sound dramatic, in real world applications the effect on overall performance is way
+smaller since normally resource management only takes a small fraction of overall run time.
+
+
+\subsubsection sharedptr shared_ptr<>
+shared_ptr<> comes with C++11 and uses reference counting for garbage collection. When the reference
+count reaches zero, objects are automatically released using the delete operator. By this the destructor is called,
+so that it can be freely mixed with manual garbage collection.
+Reference counting cannot deal with cyclic data structures, since in this case the reference count
+will never drop to zero, even in case objects can no longer be reached from the root set.
+
+shared_ptr<> deletes objects as soon as the reference count drops to zero. This is different for MeixnerGC:
+Unreferenced objects still remain in memory until a garbage collection run is performed, i.e. compared to
+shared_ptr<> the destruction of objects is delayed.
+
+During object destruction, the reference count of other objects may drop to zero and trigger another
+destructor. This recursion may pose a problem when deallocating large sets of data. For example releasing a linked
+list, the length of the list determines the recursion depth of the destructor calls and for large
+lists, this may exhaust free space on stack and crash the program.
+
+In contrast to this MeixnerGC breaks up cycles and links between objects when running destructors and by this avoids
+recursion when releasing objects. Therefore, unlike shared_ptr<> it is suitable for dealing with deeply nested
+data structures.
+
+Due to the management of reference counts shared_ptr<> is slower than manual garbage collection but still faster
+than MeixnerGC. It has about 3-times the performance of MeixnerGC. As with manual garbage collection the impact
+on overall performance is lower, since resource management only takes a fraction of overall run time.
+
+\subsubsection smieciuchgc Smieciuch Garbage Collector
+This garbage collector (http://smieciuch.sourceforge.net/) provides a similar API as MeixnerGC using a smart pointer class gc_ptr<>.
+
+Smieciuch Garbage Collector is slower and has only about half the performance of MeixnerGC.
+
+\subsubsection boehmgc Boehm-Demers-Weiser conservative garbage collector
+BoehmGC (http://www.hboehm.info/gc/) takes a completely differenc approach: Instead of keeping track of pointers, it scans the
+whole memory and treats any 4(8)-byte sequence as pointer. These "pointers" are used for a
+mark and sweep garbage collector. Since also data is considered to be addresses, this approach is
+prone to false positives: Unused memory may be referenced by "data" and, therefore, may not be
+garbage collected although in reality it is garbage. Efficiency is reduced when the address range
+fills up: When approaching 4GB on a 32-bit system any 4-byte sequence represents a valid address and,
+thus, adds a reference to an allocated object, i.e. false positives go up when the address range fills up.
+
+Due to scanning the whole memory, this garbage collector always works for all allocated memory and
+cannot be restricted to a library or a module. It is tuned to C and by default does not invoke
+destructors. This is not a problem as long as memory allocations are concerned, since the garbage
+collector always operates on global scope, but may cause trouble, when non-memory resources are
+considered to be released in the destructor.
+
+Performance is also affected by scanning the whole memory, the performance depends on pointer density:
+The more pointers are used, the less overhead it has scanning non-pointer memory while
+having large blocks of non-pointer data slows down garbage collection, since the data has to
+be scanned but does not contribute to the garbage collection. As a result performance ranges from
+faster than new/delete, due to less overhead in the allocator, to slow performance due to large
+overhead scanning memory blocks not containing any pointers.
+
+Scanning the memory needs stopping all threads and dumping out all registers, so that all addresses
+are actually found in memory. This process is system specific and not portable.
+MeixnerGC on the other hand only uses standard C++11 functions that are not system specific and, therefore,
+should work on any system with a standards compliant C++11 compiler.
+
+
+\subsubsection perfnotes Notes on Performance
+The performance estimates given above were obtained using a GC benchmark, that can be found here:
+
+http://www.hboehm.info/gc/gc_bench/GCBench.cpp
+
+The benchmark was adapted to use the different kinds of memory management / garbage collection to perform
+the performance measurements.
+
+The following numbers were obtained on a core i7 by running the benchmark 3 times and taking the median value:
+
+Collector | Time
+----------|-------
+BoehmGC   | 520ms
+new/delete| 574ms
+shared_ptr| 807ms
+MeixnerGC | 2994ms
+Smieciuch | 7710ms
+
+Overall the performance estimates should be considered rough estimates and may be severly affected
+by border conditions like number of threads or effects from memory cache.
+
+\subsection compat Backwards compatibility
+Version 1.0 has been rewritten from scratch to take advantage of C++11 features and is not
+backwards compatible with previous 0.x versions. It no longer depends on overloading the new
+and delete operators to allow free mixing with other smart pointers like e.g. shared_ptr.
+
+\subsection lic License
+Copyright (c) 2017 Dr. Matthias Meixner
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+*/
