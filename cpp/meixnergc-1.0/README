@@ -1,0 +1,169 @@
+                               MeixnerGC
+                               =========
+                              Version 1.0
+                Copyright (C) 2017 Dr. Matthias Meixner
+                      meixner@users.sourceforge.net
+
+Introduction
+------------
+MeixnerGC implements a smart pointer class for C++11 that uses mark and sweep
+to support garbage collection of cyclic data structures.
+
+The smart pointer can be used for all types of dynamic objects, they do not have
+to be prepared for use by the smart pointer. Both simple objects and arrays are
+supported.
+
+The garbage collector invokes the destructor when objects are released. This
+allows mixing garbage collected code with non-collected code.
+
+
+Portability
+-----------
+MeixnerGC just uses standard C++11 methods and does not depend on any OS
+specific calls. Therefore, it should be possible to use it with any standards
+compliant C++11 compiler.
+
+
+Compiling MeixnerGC
+-------------------
+
+> make all
+
+This will compile both a static library and shared library for use, but it is
+also possible to simply add gc_ptr.cxx to the list of source files of your
+project.
+
+> make install
+
+This will install the include file in $(PREFIX)/include and the libs in
+$(LIBPREFIX). PREFIX defaults to /usr and LIBPREFIX defaults to $(PREFIX)/lib
+
+> make unittest
+
+This runs a unit test to check whether all features work on your platform as
+expected.
+
+
+Programming
+-----------
+New objects must be allocated using make_gc<>() for use with the smart pointer.
+make_gc<>() comes in two flavours:
+
+ - Allocating single objects:
+
+   make_gc<T>(...)
+
+   The parameters are forwarded to the constructor of the respective type.
+
+ - Allocating arrays:
+
+   make_gc<T[]>(size)
+
+   size determines the size of the array.
+
+Example:
+
+   gc_ptr<A> a=make_gc<A>("foobar"); // allocate A and invoke A::A("foobar")
+   gc_ptr<A> b=make_gc<A[]>(10);     // allocate array of A size 10
+
+
+The following example shows how gc_ptr and the garbage collector should be used:
+
+   #include <stdio.h>
+   #include "gc_ptr.h"
+   using namespace mxgc;
+   class A {
+    public:
+      gc_ptr<A> next;
+      A() { printf("construct A\n"); }
+      virtual ~A() { printf("destruct A\n"); }
+   };
+   class B: public A {
+    public:
+      B() { printf("construct B\n"); }
+      ~B() { printf("destruct B\n"); }
+   };
+   int main()
+   {
+      gc_ptr<B> b=make_gc<B>(); // allocate object
+      gc_ptr<A> a=b;            // automatic cast
+      gc_ptr<B> b2;
+      b2=pointer_cast<B>(a);              // replacement for C-style cast
+      b2=static_pointer_cast<B>(a);       // replacement for static_cast
+      b2=dynamic_pointer_cast<B>(a);      // replacement for dynamic_cast
+      b2=reinterpret_pointer_cast<B>(a);  // replacement for reinterpret_cast
+      gc_ptr<const A> a2;
+      a2=const_pointer_cast<const A>(a);  // replacement for const_cast
+   }
+
+
+More usage examples can be found in the unit test gc_test.cxx.
+
+
+Cast operators
+--------------
+gc_ptr<>() implements the cast operators known from shared_ptr:
+
+ - static_pointer_cast
+ - dynamic_pointer_cast
+ - const_pointer_cast
+
+In addition it implements
+
+ - reinterpret_pointer_cast
+ - pointer_cast
+
+They are provided as replacement for reinterpret_cast and for C-style casts.
+
+
+GC Interface
+------------
+Garbage collection happens transparently to the user, so no actions are required
+to trigger a garbage collection. However, if for some reasons a garbage
+collection should be triggered manually (e.g. due to low memory), this can be
+achieved by calling:
+
+   void gc_collect()
+
+
+Limitations
+-----------
+MeixnerGC considers all smart pointers to belong to the root set that are found
+on the stack, in global data and within objects not managed by MeixnerGC.
+Therefore, it does not clean up cycles across different pointer types. For
+example: Object A has a shared_ptr<> to B which has a gc_ptr<> back to A. This
+will not be cleaned up as B is not managed by MeixnerGC and, therefore, the
+pointer within it is considered to belong to the root set, which prevents
+cleanup of A.
+
+
+Documentation
+-------------
+Full documentation can found in the doc/html directory. Point your browser to
+
+   doc/html/index.html
+
+to read it.
+
+
+License:
+--------
+Copyright (c) 2017 Dr. Matthias Meixner
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

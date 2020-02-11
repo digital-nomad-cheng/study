@@ -1,0 +1,22 @@
+
+
+meixnergc-1.0:
+        - Switch to MIT license
+        - Switch C++11
+        - Pure implementation using only C++11 features without OS dependencies
+	- Smart pointer no longer supports handling of non-allocated objects.
+        - Drop incremental mark and sweep in favour of plain mark and sweep for
+	  higher overall performance
+
+meixnergc-0.4:
+	- Bug fixes for 64 bit systems
+
+meixnergc-0.3:
+	- fixed problems with -fstrict-aliasing
+
+meixnergc-0.2:
+	- major speed up
+	- removed most compiler and platform dependencies
+
+meixnergc-0.1:
+	- initial version
