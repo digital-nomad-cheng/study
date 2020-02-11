@@ -1,0 +1,3 @@
+#!/bin/sh
+g++ -std=c++11 -Wall -o compiled main.cpp
+g++ -std=c++11 -Wall -o compiled_thread tester.cpp
