@@ -18,8 +18,6 @@ Make sure Mininet and the Stanford reference OpenFlow controller are installed, 
 Download the DHCP demo code if necessary, and start it:
 
 ```
-git clone https://bitbucket.org/lantz/cs144-dhcp
-cd cs144-dhcp
 sudo -E ./dhcp.py
 *** Creating network
 *** Adding controller
@@ -104,15 +102,3 @@ s1 ....
 dhcp evil h1 
 *** Done
 ```
-
-### Code
-
-The code is available via `git`:
-
-    git clone https://bitbucket.org/lantz/cs144-dhcp
-
-### Video
-
-A video of the DHCP attack demo is available at:
-
-https://bitbucket.org/lantz/cs144-dhcp/downloads/firefox-dhcp-4-720p.mov
