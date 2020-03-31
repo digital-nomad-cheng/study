@@ -7,7 +7,8 @@ Repo for building my basci computer science skill stacks
 1. [Computer Systems: A Programmer's Perspective](https://www.goodreads.com/book/show/829182)
 ## Operating Systems
 ## Compilers
-## Network
+## Computer Networking
+1. [Computer Networking: A Top-Down Approach](https://www.goodreads.com/book/show/34747849-computer-networking)
 
 
 
