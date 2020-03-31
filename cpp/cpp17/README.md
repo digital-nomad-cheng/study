@@ -3,8 +3,9 @@
 int i{42};
 std::string s{"hello"};
 ```
-??? Difference
-+ list iniitialization
+Why list iniitialization is better?
+[Look at the stackoverflow answer Here](https://stackoverflow.com/questions/18222926/why-is-list-initialization-using-curly-braces-better-than-the-alternatives)
+Basically, list initialization is more safe for it doesn't allow narrowing.
 
 2. Structured biindings: initialize multiple entities by the elements of members of an object
 ```c++
