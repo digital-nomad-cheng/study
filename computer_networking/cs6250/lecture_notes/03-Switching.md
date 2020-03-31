@@ -1,7 +1,5 @@
-* Intro
-A network serves to route packets between machines on the network
-* Switching and Bridging
-Problem:
+* Intro A network serves to route packets between machines on the network
+* Switching and Bridging Problem:
 - How hosts find each other on a subnet
 - How subnets are interconnected
 
@@ -65,14 +63,16 @@ Learning switch floods when there's no entries in the table, and when there are 
 * Quiz: Learning Switches
 Say that Host D on port 4 sends a frame to Host B on port 2. Assuming the table is empty, fill out the new entry in the table:
 
-| DST | PORT |
-|-----+------|
-| D   | 4    |
+| DST  | PORT |
+| ---- | ---- |
+| D    | 4    |
+
 * Spanning Tree
 Solution to looping: spanning tree, a loop free topology that covers every node
 - Nodes forward packets to other nodes that are part of the tree
 
-** Constructing a Spanning Tree
+## Constructing a Spanning Tree
+
 1. Elect a root (switch with smallest ID)
    - at first, every node thinks it is the root
    - each switch updates what it thinks the root is
@@ -130,4 +130,3 @@ Lecture notes:
 See some handwritten notes on how the instructor arrives at B = 2T * C since he just skims over the algebra.
 
 B = 2T * C makes sense if 20,000 flows are synchronized. If these flows are desynchronized, we can use a smaller buffer
-* 

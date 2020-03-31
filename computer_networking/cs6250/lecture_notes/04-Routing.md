@@ -3,23 +3,23 @@ The internet is made up of connected independently operated *automonoums systems
 * Intra-AS Topology
 An intradomain network is comprised of *nodes* or *points of presence* (POPs), and *edges* that connect them. Edges usually parallel major transportation routes. *Routing* is the process through which nodes discover other nodes and calculate which nodes to forward traffic to. There are two types of intradomain routing: *distance vector* and *link state*
 * Distance Vector Routing
-Each node sends "vectors" to their neighbors, or basically copies of their routing table. Routers compute costs to their destination based on shortest available path. The *Bellman-Ford* algorithm is one type of distance vector algorithm, described by the following equation: d_x(y) = min_v(c(x,v) + d_v(y)) 
-* Example of Distance Vector Routing
-(Just work out a sample problem to get the hang of the mechanics)
+  Each node sends "vectors" to their neighbors, or basically copies of their routing table. Routers compute costs to their destination based on shortest available path. The *Bellman-Ford* algorithm is one type of distance vector algorithm, described by the following equation: d_x(y) = min_v(c(x,v) + d_v(y)) 
+  * Example of Distance Vector Routing
+  (Just work out a sample problem to get the hang of the mechanics)
 
-One problem of distance vector routing with the Bellman-Ford algorithm is the *count to infinity* problem, where nodes are slow to get the correct shortest distance to a node when the cost between nodes suddenly changes. [[https://youtu.be/ylzAefKENXY?t%3D11m48s][Here]] is a good explanation of the count to infinity problem.
+  One problem of distance vector routing with the Bellman-Ford algorithm is the *count to infinity* problem, where nodes are slow to get the correct shortest distance to a node when the cost between nodes suddenly changes. [Here](https://www.youtube.com/watch?v=lbiLrM_IzPY) is a good explanation of the count to infinity problem.
 
-* Routing Information Protocol
-RIP is an example of a distance vector routing protocol created in 1982, where edges have unit cost, and inifinity (for the count-to-infinity problem) is 16. The table refreshes every 30 seconnds or when updates occur, and the vector is sent to all neighbors except for the one that caused the update ("*split horizon rule*"). Timeout occurs in 180 seconds (time for 6 hops). Convergence occurs within minutes (considered slow) when a disturbance occurs.
+  * Routing Information Protocol
+    RIP is an example of a distance vector routing protocol created in 1982, where edges have unit cost, and inifinity (for the count-to-infinity problem) is 16. The table refreshes every 30 seconnds or when updates occur, and the vector is sent to all neighbors except for the one that caused the update ("*split horizon rule*"). Timeout occurs in 180 seconds (time for 6 hops). Convergence occurs within minutes (considered slow) when a disturbance occurs.
 * Link State Routing
-Most prevalent. Nodes distribute a network map, and then each node performs shortest path (SPF) computation between itself and all other nodes. Link state routing utilizes Dijkstra's algorithm for finding the shortest path: D(v) = min(c(v,w) + D(w), D(v)). Two common link-state routing protocols are Open Shortest Paths First (OSPF) and Intermediate System-Intermediate System (IS-IS). IS-IS is more commonly used. The problem with link state routing is scale. Complexity grows at n^3, where n is the number of nodes
-* Coping with Scale: Hierarchy
-One way to cope with scale is to introduce hierarchy. In OSPF, this is done with areas, and in IS-IS, this is done with levels. Routers can be divided into areas. In OSPF, the backbone area is called area 0, and areas not in area 0 have area 0 routers. These routers perform SPF, and routers in other areas independently perform SPF. 
-* Interdomain Routing
-'Interdomain routing' refers to routing between ASes. Each AS border router broadcasts reachability to a destination using *route advertisements* via *BGP*, or the border gateway protocol. A route advertisement contains many attributes, the most important of which are the following:
-- destination IP
-- the next hop IP: The IP address of the router that the first router must send traffic to, typically the first router of the next AS. They are usually on the same subnet
-- the AS path: sequence of AS numbers that describe the route to the destination AS. The last AS number is the *origin AS*, or the originator of the route advertisement
+  Most prevalent. Nodes distribute a network map, and then each node performs shortest path (SPF) computation between itself and all other nodes. Link state routing utilizes Dijkstra's algorithm for finding the shortest path: D(v) = min(c(v,w) + D(w), D(v)). Two common link-state routing protocols are Open Shortest Paths First (OSPF) and Intermediate System-Intermediate System (IS-IS). IS-IS is more commonly used. The problem with link state routing is scale. Complexity grows at n^3, where n is the number of nodes
+  * Coping with Scale: Hierarchy
+    One way to cope with scale is to introduce hierarchy. In OSPF, this is done with areas, and in IS-IS, this is done with levels. Routers can be divided into areas. In OSPF, the backbone area is called area 0, and areas not in area 0 have area 0 routers. These routers perform SPF, and routers in other areas independently perform SPF. 
+  * Interdomain Routing
+    'Interdomain routing' refers to routing between ASes. Each AS border router broadcasts reachability to a destination using *route advertisements* via *BGP*, or the border gateway protocol. A route advertisement contains many attributes, the most important of which are the following:
+  * destination IP
+  * the next hop IP: The IP address of the router that the first router must send traffic to, typically the first router of the next AS. They are usually on the same subnet
+  * the AS path: sequence of AS numbers that describe the route to the destination AS. The last AS number is the *origin AS*, or the originator of the route advertisement
 
 The previously described advertisement that goes on between routers that lie on the border of ASes is called *external BGP* (eBGP). If an internal router inside an AS wants routing information about external ASes, it would use *internal BGP* (iBGP)
 * IGP vs iBGP
