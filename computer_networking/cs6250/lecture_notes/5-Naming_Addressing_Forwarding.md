@@ -35,10 +35,11 @@ A CIDR report shows AS' IP prefixes, and how many of them they could aggregate.
 - IP Address lookup
 - Implementation of LPM in the form of tries
 * Lookup Algorithm Depends on Protocol
-| Protocol            | Mechanism            | Technique                                       |
-|---------------------+----------------------+-------------------------------------------------|
-| MPLS, Ethernet, ATM | Exact Match          | Direct lookup, associated, hashing, binary tree |
-| IP4, IP6            | longest prefix match | Radix trie, compressed trie, binary search      |
+
+  |      Protocol       |      Mechanism       |                    Technique                    |
+  | :-----------------: | :------------------: | :---------------------------------------------: |
+  | MPLS, Ethernet, ATM |     Exact Match      | Direct lookup, associated, hashing, binary tree |
+  |     IPV4, IPV6      | longest prefix match |   Radix trie, compressed trie, binary search    |
 
 
 Exact match is simple and has a complexity of O(1), but it's inefficient in its use of memory
