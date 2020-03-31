@@ -1,4 +1,4 @@
-* Brief history of the internet
+## Brief history of the internet
 Internet has its roots in the ARPANET
 
 ARPANET (1966-1967): goal was to connect academic computers
@@ -36,7 +36,8 @@ Lot of application-type milestones in the 90s
 5. DOS: easy for attacker to overload servers or links
 
 All these require changes to the basic infrastructure, which is difficult
-* Architectural Design Principles
+
+## Architectural Design Principles
 Discussed in 'Design Philosophy of the DARPA Internet Protocols'
 
 Principles were designed for a certain type of network, leading to some growing pains
