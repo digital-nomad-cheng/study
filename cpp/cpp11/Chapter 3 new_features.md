@@ -91,9 +91,82 @@
 
     To avoid unnecessary copies and temporaries.
 
+7. New String Literals  
+   ```c++
+   // ordinary string
+   "\\\\n"
+   // string literal
+   R"(\\n)"
 
+   ```
 
-   
+8. Keyword noexcept: used to specify that a function cannot throw or is not prepared to throw.
+   ```C++
+   void foo() noexcept;
+   ```
+   If an exception is not handled locally inside foo() — thus, if foo() throws — the program is terminated, calling std::terminate(), which by default calls std::abort()
 
-   
+9. constexpr: used for compile time evaluation
+   ```c++
+   constexpr int square (int x) 
+   {
+      return x * x; 
+   }
+   float a[square(9)]; // OK since C++11: a has 81 elements
+   ```
+   + fixs a problem C++98 had when using numeric limits, `std::numeric_limits<short>::max()` cannot be used as an integral constant.
 
+10. variadic template: accept a variable number of template arguments
+   ```c++
+   void print ()
+   {
+   }
+   template <typename T, typename... Types>
+   void print (const T& firstArg, const Types&... args) {
+   std::cout << firstArg << std::endl; // print first argument
+   print(args...); // call print() for remaining arguments }
+   ```
+
+11. Alias Templates with using keyword
+   ```c++
+   template <typename T>
+   using Vec = std::vector<T,MyAlloc<T>>;
+   Vec<int> coll;
+
+   // is equivalent to
+   std::vector<int,MyAlloc<int>> coll;
+   ```
+
+12. Lambdas
+
+13. Keyword decltype using decltype
+   - declare return types
+   - metaprogramming
+   - pass the type of a lambda
+   ```c++
+   std::map<std::string, float> col;
+   decltype(coll)::value_type elem;
+   ```
+
+14. New Function Declaration Syntax
+   Declare the return type of a function behind the parameter list
+   ```c++
+   template <typename T1, typename T2>
+   auto add(T1 x, T2 y) -> decltype(x+y)
+   ```
+
+15. New Fundamental Data types
+   - char16_t
+   - char32_t
+   - long long
+   - unsigned long long
+   - std::nullptr_t
+
+16. Scoped Enumerations
+   - Implicit conversions to and from int are not possible.
+   - Values like mr are not part of the scope where the enumeration is declared. You have to use Salutation::mr instead.
+   - You can explicitly define the underlying type (char here) and have a guaranteed size (if you skip “: char” here, int is the default).
+   - Forward declarations of the enumeration type are possible, which eliminates the need to recompile compilation units for new enumerations values if only the type is used.
+   ```c++
+   enum class Salutation : char { mr, ms, co, none };
+   ```
