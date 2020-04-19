@@ -35,3 +35,63 @@ for (const auto& [key,val] : mymap) {
 	std::cout << key << ": " << val << '\n';
 }
 ```
+3. Nested namespace
+
+```c++
+// c++11
+#include <iostream>
+namespace X
+{
+namespace Y
+{
+namespace Z 
+{
+	auto msg = "Hello World\n";
+}
+}
+}
+
+// C++17
+namespace X::Y::Z
+{
+       auto msg = "Hello World\n";
+}
+```
+4. Inline Variables: Avoids the need for managing the cubesome extern variables
+```c++
+#include <iostream>
+inline auto msg = "Hello World\n";
+int main(void)
+{
+	std::cout << msg;
+}
+
+// instead of
+// expose the variabel
+extern const char *msg;
+// define the variable
+const char *msg = "Hello World\n";
+```
+5. std::string_view: A wrapper around a character array, similar to std::array, helps to make working with basic C Strings safer and easier.
++ basic accessors
++ reduce size
++ find
++ search
+```c++
+#include <iostream>
+#include <string_view>
+int main(void)
+{
+	std::string_view str("Hello World");
+	std::cout << str.size() << '\n'; 
+	std::cout << str.max_size() << '\n'; 
+	std::cout << str.empty() << '\n';
+
+	std::cout << str.front() << '\n'; 
+	std::cout << str.back() << '\n'; 
+	std::cout << str.at(1) << '\n'; 
+	std::cout << str.data() << '\n';
+}
+```
+
+
