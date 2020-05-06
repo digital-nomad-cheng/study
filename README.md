@@ -1,5 +1,5 @@
 # Study Notes
-Repo for building my basci computer science skill stacks
+Repo for building my basic computer science skill stacks
 
 
 
