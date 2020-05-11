@@ -52,7 +52,7 @@ __global__ void rgba_to_greyscale(const uchar4* const rgbaImage,
   int y = threadIdx.y + blockIdx.y*blockDim.y;
   int x = threadIdx.x + blockIdx.x*blockDim.x;
   if (y < numCols && x < numRows) {
-    int index = numRows*y + x;
+    int index = numCols*x + y;
     uchar4 color = rgbaImage[index];
     unsigned char grey = (unsigned char)(0.299f*color.x + 0.587f*color.y + .114f*color.z);
     greyImage[index] = grey;
