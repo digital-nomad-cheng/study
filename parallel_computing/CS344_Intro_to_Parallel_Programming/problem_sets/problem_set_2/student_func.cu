@@ -109,9 +109,32 @@ __global__
 void shared_guassian_blur(const unsigned char* const inputChannel, 
 			  unsigned char* const outputChannel,
 			  int numRows, int numCols,
-			  const float* const fliter, const int filterWidth)
+			  const float* const filter, const int filterWidth)
 {
+  extern __shared__ float shared_filter[];
+  if (threadIdx.x < filterWidth && threadIdx.y < filterWidth) {
+    int idx = threadIdx.x*filterWidth + threadIdx.y;
+    shared_filter[idx] = filter[idx];
+  }
+  __syncthreads();
 
+  const int2 thread_2D_pos = make_int2(blockIdx.x*blockDim.x + threadIdx.x, 
+		  blockIdx.y*blockDim.y + threadIdx.x);
+  if (thread_2D_pos.x >= numCols || thread_2D_pos.y >= numRows)
+    return;
+  const int thread_1D_pos = thread_2D_pos.y * numCols + thread_2D_pos.x;
+
+  float result = 0.0f;
+  for (int filter_r = -filterWidth/2; filter_r <= filterWidth/2; ++filter_r) {
+    for (int filter_c = -filterWidth/2; filter_c <= filterWidth/2; ++filter_c) {
+      int image_r = min(max(thread_2D_pos.y+filter_r, 0), numRows-1);
+      int image_c = min(max(thread_2D_pos.x+filter_c, 0), numCols-1);
+      float pixel_value = static_cast<float>(inputChannel[image_r*numCols + image_c]);
+      float filter_value = shared_filter[(filter_c + filterWidth/2)*filterWidth + filter_c + filterWidth/2];
+      result += pixel_value*filter_value;
+    }
+  }
+  outputChannel[thread_1D_pos] = static_cast<unsigned char>(result);  
 }
 	
 __global__
@@ -289,13 +312,22 @@ void your_gaussian_blur(const uchar4 * const h_inputImageRGBA, uchar4 * const d_
   checkCudaErrors(cudaGetLastError());
   
   //TODO: Call your convolution kernel here 3 times, once for each color channel.
+#ifdef shared
+  shared_gaussian_blur<<<gridSize, blockSize, filterWdith*filterWidth*sizeof(float)>>>(d_red, d_redBlurred, numRows, numCols, 
+          d_filter, filterWidth);
+  shared_gaussian_blur<<<gridSize, blockSize, filterWidth*filterWidth*sizeof(float)>>>(d_green, d_greenBlurred, numRows, numCols,
+          d_filter, filterWidth);
+  shared_gaussian_blur<<<gridSize, blockSize, filterWidth*filterWidth*sizeof(float)>>>(d_blue, d_blueBlurred, numRows, numCols,
+          d_filter, filterWidth);
+#else
+  
   gaussian_blur<<<gridSize, blockSize>>>(d_red, d_redBlurred, numRows, numCols, 
           d_filter, filterWidth);
   gaussian_blur<<<gridSize, blockSize>>>(d_green, d_greenBlurred, numRows, numCols,
           d_filter, filterWidth);
   gaussian_blur<<<gridSize, blockSize>>>(d_blue, d_blueBlurred, numRows, numCols,
           d_filter, filterWidth);
-  
+#endif  
   // Again, call cudaDeviceSynchronize(), then call checkCudaErrors() immediately after
   // launching your kernel to make sure that you didn't make any mistakes.
   cudaDeviceSynchronize(); 
