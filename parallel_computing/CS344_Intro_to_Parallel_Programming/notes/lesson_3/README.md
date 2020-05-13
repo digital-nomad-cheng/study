@@ -109,7 +109,9 @@ See file `reduce.cu`
 6. Each block writes its resulting number into `d_intermediate` 
 7. Do the same for `d_intermediate` and write the result into `d_out`. The assumption here is, that this can be done by one single block.
 
-**Important note**: The kernel that uses shared memory in the official lecture code snippets gives the right result, the simpler one that uses global memory **does not!** TODO: figure out why...
+**Important note**: The kernel that uses shared memory in the official lecture code snippets gives the right result, the simpler one that uses global memory **does not!** 
+
+TODO: figure out why...
 
 **Global vs shared: memory bandwidth**
 
