@@ -10,8 +10,9 @@ __global__ void globalMem_reduce_kernel(float *d_out, float *d_in)
 
     for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
         if (tid < s) { // if threadIdx.x is on the left half
-            d_in[ttid] += d_in[ttid + s];
-        }
+            // d_in[ttid] += d_in[ttid + s];
+	    atomicAdd(&d_in[ttid], d_in[ttid+s]);
+    	}
         __syncthreads();
     }
     
@@ -25,7 +26,7 @@ __global__ void sharedMem_reduce_kernel(float *d_out, float *d_in)
 {
     // shared data is allocated in the kernel call: 3rd argument
     extern __shared__ float shared_data[];
-    int ttid = threadIdx.x + blockDim.x * threadIdx.x;
+    int ttid = threadIdx.x + blockDim.x * blockIdx.x;
     int tid = threadIdx.x;
 
     // load shared memory from global memory
