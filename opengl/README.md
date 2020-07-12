@@ -13,6 +13,11 @@
 	#include <GLFW/glfw3.h>
 	```
 5. Add `IOKit.framework` and `Cocoa.framework` to project.
+	
+	https://stackoverflow.com/questions/18391487/compiling-with-glfw3-linker-errors-undefined-reference
+
+
+
 
 
 ## Reference
