@@ -7,6 +7,7 @@
 	#include <GLFW/glfw3.h>
 	```
 4. Configure [GLAD](https://glad.dav1d.de/) according to [tutorial](https://learnopengl-cn.github.io/01%20Getting%20started/02%20Creating%20a%20window/). Then link glad:
+	GLAD is used to manage pointers of OpenGL, we must initialize glad before we call OpenGL functions.
 	```C++
 	// include glad before glfw otherwise there will be compile error.
 	#include <glad/glad.h> 
