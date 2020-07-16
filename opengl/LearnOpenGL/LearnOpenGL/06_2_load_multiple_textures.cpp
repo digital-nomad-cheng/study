@@ -46,28 +46,10 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
     
-    Shader ourShader("/Users/vincent/Documents/Repo/study/opengl/LearnOpenGL/resources/06_1_load_shader.vs",
-                     "/Users/vincent/Documents/Repo/study/opengl/LearnOpenGL/resources/06_1_load_shader.fs");
+    Shader ourShader("/Users/vincent/Documents/Repo/study/opengl/LearnOpenGL/resources/06_2_load_multiple_shader.vs",
+                     "/Users/vincent/Documents/Repo/study/opengl/LearnOpenGL/resources/06_2_load_multiple_shader.fs");
     
-    unsigned int texture;
-    glGenTextures(1, &texture);
-//    glActiveTexture(GL_TEXTURE0); GL_TEXTURE0 is activated by default
-    glBindTexture(GL_TEXTURE_2D, texture);
-    // set wrap methods and filtering method
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load("/Users/vincent/Documents/Repo/study/opengl/LearnOpenGL/resources/container.jpg", &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        // automatically generate all the required mipmaps for the currently bound texture.
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
+   
     
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -106,6 +88,47 @@ int main(int argc, const char * argv[]) {
     glEnableVertexAttribArray(2);
     
     
+    unsigned int texture1, texture2;
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    // set wrap methods and filtering method
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load("/Users/vincent/Documents/Repo/study/opengl/LearnOpenGL/resources/container.jpg", &width, &height, &nrChannels, 0);
+    if (data) {
+       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+       // automatically generate all the required mipmaps for the currently bound texture.
+       glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+       std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+    // texture2
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    // set wrap methods and filtering method
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    data = stbi_load("/Users/vincent/Documents/Repo/study/opengl/LearnOpenGL/resources/awesomeface.png", &width, &height, &nrChannels, 0);
+    if (data) {
+       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+       // automatically generate all the required mipmaps for the currently bound texture.
+       glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+       std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+    
+    // tell opengl for each sampler to which texture unit  it belongs to
+    ourShader.use();
+    ourShader.setInt("texture1", 0); // set the sampler texture1 that it belongs to texture unit 0
+    ourShader.setInt("texture2", 1); // set the sampler texture2 that it belongs to texture unit 1
+    
     
     // render loop
     while(!glfwWindowShouldClose(window))
@@ -116,8 +139,14 @@ int main(int argc, const char * argv[]) {
         // set buffer type as color buffer
         glClear(GL_COLOR_BUFFER_BIT);
         
-        // draw our first triangle
-        ourShader.use();
+        // it seems we can also bind once outside the render loop
+        // bind textures on corresponding texture units
+        // texture1 and texture 2 are diffrent things with texture1 and texture2 in fragment shader
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1); // bind texture1 to texture unit 0
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2); // bind texture2 to texture unit 1
+        
         
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         // glDrawArrays(GL_TRIANGLES, 0, 3);
