@@ -21,23 +21,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window);
 
-const char *vertexShaderSource = "#version 410 core\n"
-    "layout (location=0) in vec3 aPos;\n"
-    "layout (location=1) in vec3 aColor;\n"
-    "out vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "ourColor = aColor;\n"
-    "}\0";
-const char *fragmentShaderSource = "#version 330 core\n"
-    "in vec3 ourColor;\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(ourColor, 1.0);\n"
-    "}\n\0";
-
 int main(int argc, const char * argv[]) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -68,6 +51,7 @@ int main(int argc, const char * argv[]) {
     
     unsigned int texture;
     glGenTextures(1, &texture);
+//    glActiveTexture(GL_TEXTURE0); GL_TEXTURE0 is activated by default
     glBindTexture(GL_TEXTURE_2D, texture);
     // set wrap methods and filtering method
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
