@@ -66,6 +66,31 @@ Parameters:
 + format: specifies the format of the pixel data
 + type: specifies the data type of the pixel data
 + data: specifies a pointer to the image data in memory.
+
+## Transformation
+1. vector: direction and magnitude
+	+ operation with scalar
+	+ vector negation
+	+ addition and subtraction
+	+ length
+	+ dot product
+	+ cross product: is only defined in 3D space
+2. unit vector: length = 1
+3. matrix
+	+ addition and subtraction
+	+ matrix-scalar products
+	+ matrix-matrix products
+4. matrix-vector multiplication
+	In OpenGL we usually work with 4x4 transformation matrices for several reasons and one of them is that most of the vectors are of size 4
+	+ scale
+		+ uniform scale
+		+ ununiform scale
+	+ translation
+	+ rotation
+
+5. Homogeneous coordinates: can be used to translate 3-D vectors
+
+
 ## Reference
 
 1. Learn OpenGL: https://learnopengl-cn.github.io/
