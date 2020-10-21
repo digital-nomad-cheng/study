@@ -50,45 +50,6 @@ Parameters:
  5. The fifth parameter is known as the stride and tells us the space between consecutive vertex attributes. we could've also specified the stride as 0 to let OpenGL determine the stride (this only works when values are tightly packed).
  6. The last parameter is of type void* and is the offset of where the position data begins in the buffer. 
 
-## Texture
-1. `glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *data)`
-```C++
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-```
-The function `glTexImage2D` generates the texture image on the currently bound texture object at the active texture unit. The function expects destination and source data from where the source image is expected to be an array of data.
-Parameters:
-+ target: specifies the texture target of which the most common are `GL_TEXTURE_1D`, `GL_TEXTURE2D` and `GL_TEXTURE3D`
-+ level: specifies the level-of-number. Level 0 is the base image level. Level n is the nth mipmap reduction image.
-+ internalFormat: specifies the number of color componnets in the texture.
-+ width: specifies the width of texture image
-+ height: specifies the height of texture image, or the number of layers in a texture array
-+ border: this value must be 0
-+ format: specifies the format of the pixel data
-+ type: specifies the data type of the pixel data
-+ data: specifies a pointer to the image data in memory.
-
-## Transformation
-1. vector: direction and magnitude
-	+ operation with scalar
-	+ vector negation
-	+ addition and subtraction
-	+ length
-	+ dot product
-	+ cross product: is only defined in 3D space
-2. unit vector: length = 1
-3. matrix
-	+ addition and subtraction
-	+ matrix-scalar products
-	+ matrix-matrix products
-4. matrix-vector multiplication
-	In OpenGL we usually work with 4x4 transformation matrices for several reasons and one of them is that most of the vectors are of size 4
-	+ scale
-		+ uniform scale
-		+ ununiform scale
-	+ translation
-	+ rotation
-
-5. Homogeneous coordinates: can be used to translate 3-D vectors
 
 
 ## Reference
