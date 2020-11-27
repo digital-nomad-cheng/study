@@ -9,6 +9,7 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+
 using namespace std;
 
 #include "console.h" // required of all files that contain the main function
@@ -35,18 +36,20 @@ static void welcome() {
     getLine("Hit [enter] to continue....   ");
 }
 
-static void parseFileIntoGrid(std::string& file_name, LifeDisplay& display)
+static void parseFileIntoGrid(std::string& file_name, Grid<int>& grid)
 {
     if (file_name.empty()) {
         std::cout << "Random initialize grid." << std::endl;
         int width = std::rand() % 21 + 40;
         int height = std::rand() % 21 + 40;
-        display.setDimensions(height, width);
+        // display.setDimensions(height, width);
+        grid.resize(height, width);
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 if (std::rand() % 2) {
                     int age = std::rand() % (kMaxAge) + 1;
-                    display.drawCellAt(h, w, age);
+                    // display.drawCellAt(h, w, age);
+                    grid[h][w] = age;
                 }
             }
         }
@@ -70,7 +73,8 @@ static void parseFileIntoGrid(std::string& file_name, LifeDisplay& display)
             }
         }
         std::cout << "width: " << width << "height: " << height << std::endl;
-        display.setDimensions(height, width);
+        // display.setDimensions(height, width);
+        grid.resize(height, width);
         file = std::ifstream(file_name);
         int h = 0;
         int w = 0;
@@ -82,7 +86,8 @@ static void parseFileIntoGrid(std::string& file_name, LifeDisplay& display)
             } else {
                 for (char& c : line) {
                     if (c == 'X') {
-                        display.drawCellAt(h, w, 1);
+                        // display.drawCellAt(h, w, 1);
+                        grid[h][w] = 1;
                     }
                     w += 1;
                 }
@@ -118,8 +123,29 @@ SimulationMode chooseSimulationMode()
         std::cout << "Invalide input, please choose agian!" << std::endl;
         return chooseSimulationMode();
     }
+}
+
+void displayCells(LifeDisplay& display, Grid<int>& cells)
+{
+    for (int h = 0; h < cells.numRows(); h++) {
+        for (int w = 0; w < cells.numCols(); w++) {
+            display.drawCellAt(h, w, cells[h][w]);
+        }
+    }
+}
+
+int numOfNeighbors(Grid<int>& cells, int h, int w)
+{
+    int height = cells.numRows();
+    int width = cells.numCols();
+
 
 }
+void simulate(Grid<int>& current_cells, Grid<int>& next_cells)
+{
+
+}
+
 
 /**
  * Function: main
@@ -130,13 +156,24 @@ int main() {
     LifeDisplay display;
     display.setTitle("Game of Life");
     welcome();
+    Grid<int> current_cells;
+    Grid<int> next_cells;
+
     std::string file_name = getLine("You can start your colony with random cells or read from a prepared file.\n"
             "Enter name of colony file (or RETURN to seed randomly):");
-    parseFileIntoGrid(file_name, display);
+    parseFileIntoGrid(file_name, current_cells);
+    int height = current_cells.numRows();
+    int width = current_cells.numCols();
+    display.setDimensions(height, width);
+    displayCells(display, current_cells);
     SimulationMode mode = chooseSimulationMode();
+
+
     while (1) {
         switch(mode) {
             case SimulationMode::Fast:
+                simulate(current_cells, next_cells);
+                displayCells(display, current_cells);
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 display.repaint();
                 break;
