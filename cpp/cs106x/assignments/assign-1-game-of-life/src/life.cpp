@@ -31,6 +31,18 @@ static void welcome() {
     getLine("Hit [enter] to continue....   ");
 }
 
+static void parseFileIntoGrid(std::string& file_name, LifeDisplay& display)
+{
+    if (file_name.empty()) {
+        std::cout << "Random initialize grid." << std::endl;
+        while (1) {
+            display.setDimensions(50, 50);
+            display.drawCellAt(40, 40, 10);
+            display.repaint();
+        }
+    }
+}
+
 /**
  * Function: main
  * --------------
@@ -40,5 +52,10 @@ int main() {
     LifeDisplay display;
     display.setTitle("Game of Life");
     welcome();
+    std::string file_name = getLine("You can start your colony with random cells or read from a prepared file.\n"
+            "Enter name of colony file (or RETURN to seed randomly):");
+    parseFileIntoGrid(file_name, display);
+
+
     return 0;
 }
