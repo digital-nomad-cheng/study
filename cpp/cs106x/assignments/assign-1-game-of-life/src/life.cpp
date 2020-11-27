@@ -7,6 +7,8 @@
 #include <iostream>  // for cout
 #include <string>
 #include <fstream>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 #include "console.h" // required of all files that contain the main function
@@ -80,7 +82,6 @@ static void parseFileIntoGrid(std::string& file_name, LifeDisplay& display)
             } else {
                 for (char& c : line) {
                     if (c == 'X') {
-                        std::cout << c << std::endl;
                         display.drawCellAt(h, w, 1);
                     }
                     w += 1;
@@ -89,8 +90,35 @@ static void parseFileIntoGrid(std::string& file_name, LifeDisplay& display)
             }
         }
     }
-//    while (1)
-//        display.repaint();
+}
+
+enum SimulationMode {
+    Fast = 1,
+    Medium,
+    Slow,
+    Manual,
+};
+
+SimulationMode chooseSimulationMode()
+{
+   std::string mode = getLine("You choose how fast to run the simulation.\n"
+           "1 = As fast as this chip can go!\n"
+           "2 = Not too fast, this is a school zone.\n"
+           "3 = Nice and slow so I can watch everything that happens.\n"
+           "4 = Require enter key be pressed before advancing to next generation.\n");
+    if (stringToInteger(mode) == 1) {
+        return SimulationMode::Fast;
+    } else if(stringToInteger(mode) == 2) {
+        return SimulationMode::Medium;
+    } else if(stringToInteger(mode) == 3) {
+        return SimulationMode::Slow;
+    } else if(stringToInteger(mode) == 4) {
+        return SimulationMode::Manual;
+    } else {
+        std::cout << "Invalide input, please choose agian!" << std::endl;
+        return chooseSimulationMode();
+    }
+
 }
 
 /**
@@ -105,7 +133,24 @@ int main() {
     std::string file_name = getLine("You can start your colony with random cells or read from a prepared file.\n"
             "Enter name of colony file (or RETURN to seed randomly):");
     parseFileIntoGrid(file_name, display);
-
-
+    SimulationMode mode = chooseSimulationMode();
+    while (1) {
+        switch(mode) {
+            case SimulationMode::Fast:
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                display.repaint();
+                break;
+            case SimulationMode::Medium:
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                display.repaint();
+                break;
+            case SimulationMode::Slow:
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                display.repaint();
+                break;
+            default:
+                break;
+        }
+    }
     return 0;
 }
