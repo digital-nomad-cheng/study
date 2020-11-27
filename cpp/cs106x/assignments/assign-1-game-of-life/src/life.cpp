@@ -5,6 +5,8 @@
  */
 
 #include <iostream>  // for cout
+#include <string>
+#include <fstream>
 using namespace std;
 
 #include "console.h" // required of all files that contain the main function
@@ -35,12 +37,60 @@ static void parseFileIntoGrid(std::string& file_name, LifeDisplay& display)
 {
     if (file_name.empty()) {
         std::cout << "Random initialize grid." << std::endl;
-        while (1) {
-            display.setDimensions(50, 50);
-            display.drawCellAt(40, 40, 10);
-            display.repaint();
+        int width = std::rand() % 21 + 40;
+        int height = std::rand() % 21 + 40;
+        display.setDimensions(height, width);
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                if (std::rand() % 2) {
+                    int age = std::rand() % (kMaxAge) + 1;
+                    display.drawCellAt(h, w, age);
+                }
+            }
+        }
+    } else {
+        std::cout << "Initialize from file:" << file_name << std::endl;
+        std::ifstream file(file_name);
+        if (!file.is_open()) {
+            std::cout << "Failed to open file" << std::endl;
+            return;
+        }
+        std::string line;
+        int width = 0;
+        int height = 0;
+        while(std::getline(file, line)) {
+            // std::cout << line << std::endl;
+            if (line[0] == '#') {
+                continue;
+            } else {
+                width = line.length();
+                height += 1;
+            }
+        }
+        std::cout << "width: " << width << "height: " << height << std::endl;
+        display.setDimensions(height, width);
+        file = std::ifstream(file_name);
+        int h = 0;
+        int w = 0;
+        while(std::getline(file, line)) {
+            // std::cout << line << std::endl;
+            w = 0;
+            if (line[0] == '#') {
+                continue;
+            } else {
+                for (char& c : line) {
+                    if (c == 'X') {
+                        std::cout << c << std::endl;
+                        display.drawCellAt(h, w, 1);
+                    }
+                    w += 1;
+                }
+                h += 1;
+            }
         }
     }
+//    while (1)
+//        display.repaint();
 }
 
 /**
