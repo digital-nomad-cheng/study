@@ -128,9 +128,17 @@ void displayCells(LifeDisplay& display, Grid<int>& cells)
 
 int numOfNeighbors(Grid<int>& cells, int h, int w)
 {
-    return cells[h-1][w-1] + cells[h-1][w] + cells[h-1][w+1] +
-           cells[h][w-1] + cells[h][w] + cells[h][w+1] +
-           cells[h+1][w-1] + cells[h+1][w] + cells[h+1][w+1];
+
+
+
+    return (cells[h-1][w-1] > 0) +
+           (cells[h-1][w] > 0) +
+           (cells[h-1][w+1] >0) +
+           (cells[h][w-1] > 0) +
+           (cells[h][w+1] > 0) +
+           (cells[h+1][w-1] > 0) +
+           (cells[h+1][w] > 0) +
+           (cells[h+1][w+1] > 0);
 
 }
 
@@ -151,16 +159,18 @@ void simulate(Grid<int>& current_cells, Grid<int>& next_cells)
     for (int h = 0; h < current_cells.numRows(); h++) {
         for(int w = 0; w < current_cells.numCols(); w++) {
             int num_neighbors = numOfNeighbors(padded_cells, h+1, w+1);
-            if (num_neighbors <= 2) {
-                continue;
-            } else if (num_neighbors == 3) {
+            if (num_neighbors <= 1) {
+                next_cells[h][w] = 0;
+            } else if(num_neighbors == 2) {
                 if (current_cells[h][w] == 0) {
-                    next_cells[h][w] = 1;
-                }
-            } else if (num_neighbors >= 4) {
-                if (current_cells[h][w] > 0) {
                     next_cells[h][w] = 0;
+                } else {
+                    next_cells[h][w] += 1;
                 }
+            } else if (num_neighbors == 3) {
+                next_cells[h][w] += 1;
+            } else if (num_neighbors >= 4) {
+                next_cells[h][w] = 0;
             }
         }
     }
@@ -190,6 +200,7 @@ int main() {
     int width = current_cells.numCols();
     display.setDimensions(height, width);
     displayCells(display, current_cells);
+    display.repaint();
     SimulationMode mode = chooseSimulationMode();
 
 
