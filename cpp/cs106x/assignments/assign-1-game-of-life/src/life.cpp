@@ -136,23 +136,29 @@ void displayCells(LifeDisplay& display, Grid<int>& cells)
 
 int numOfNeighbors(Grid<int>& cells, int h, int w)
 {
-    int height = cells.numRows();
-    int width = cells.numCols();
-
     return cells[h-1][w-1] + cells[h-1][w] + cells[h-1][w+1] +
            cells[h][w-1] + cells[h][w] + cells[h][w+1] +
            cells[h+1][w-1] + cells[h+1][w] + cells[h+1][w+1];
 
 }
+
 void simulate(Grid<int>& current_cells, Grid<int>& next_cells)
 {
+    next_cells.resize(current_cells.numRows(), current_cells.numCols());
+    Grid<int> padded_cells = Grid<int>(current_cells.numRows()+2, current_cells.numCols()+2);
+    for (int h = 0; h < current_cells.numRows(); h++) {
+        for (int w = 0; w < current_cells.numCols(); w++) {
+            padded_cells[h+1][w+1] = current_cells[h][w];
+        }
+    }
+
     for (int h = 0; h < current_cells.numRows(); h++)
         for(int w = 0; w < current_cells.numCols(); w++)
             next_cells[h][w] = current_cells[h][w];
 
     for (int h = 0; h < current_cells.numRows(); h++) {
         for(int w = 0; w < current_cells.numCols(); w++) {
-            int num_neighbors = numOfNeighbors(current_cells, h, w);
+            int num_neighbors = numOfNeighbors(padded_cells, h+1, w+1);
             if (num_neighbors <= 2) {
                 continue;
             } else if (num_neighbors == 3) {
@@ -204,10 +210,14 @@ int main() {
                 display.repaint();
                 break;
             case SimulationMode::Medium:
+                simulate(current_cells, next_cells);
+                displayCells(display, current_cells);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 display.repaint();
                 break;
             case SimulationMode::Slow:
+                simulate(current_cells, next_cells);
+                displayCells(display, current_cells);
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                 display.repaint();
                 break;
