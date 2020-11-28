@@ -42,13 +42,11 @@ static void parseFileIntoGrid(std::string& file_name, Grid<int>& grid)
         std::cout << "Random initialize grid." << std::endl;
         int width = std::rand() % 21 + 40;
         int height = std::rand() % 21 + 40;
-        // display.setDimensions(height, width);
         grid.resize(height, width);
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 if (std::rand() % 2) {
                     int age = std::rand() % (kMaxAge) + 1;
-                    // display.drawCellAt(h, w, age);
                     grid[h][w] = age;
                 }
             }
@@ -57,36 +55,30 @@ static void parseFileIntoGrid(std::string& file_name, Grid<int>& grid)
         std::cout << "Initialize from file:" << file_name << std::endl;
         std::ifstream file(file_name);
         if (!file.is_open()) {
-            std::cout << "Failed to open file" << std::endl;
+            std::cout << "Failed to open file." << std::endl;
             return;
         }
         std::string line;
+        int line_count = 0;
         int width = 0;
         int height = 0;
-        while(std::getline(file, line)) {
-            // std::cout << line << std::endl;
-            if (line[0] == '#') {
-                continue;
-            } else {
-                width = line.length();
-                height += 1;
-            }
-        }
-        std::cout << "width: " << width << "height: " << height << std::endl;
-        // display.setDimensions(height, width);
-        grid.resize(height, width);
-        file = std::ifstream(file_name);
         int h = 0;
         int w = 0;
         while(std::getline(file, line)) {
             // std::cout << line << std::endl;
-            w = 0;
             if (line[0] == '#') {
                 continue;
+            } else if(line_count == 0) {
+                height = stringToInteger(line);
+                line_count += 1;
+            } else if(line_count == 1) {
+                width = stringToInteger(line);
+                line_count += 1;
+                grid.resize(height, width);
             } else {
+                w = 0;
                 for (char& c : line) {
                     if (c == 'X') {
-                        // display.drawCellAt(h, w, 1);
                         grid[h][w] = 1;
                     }
                     w += 1;
