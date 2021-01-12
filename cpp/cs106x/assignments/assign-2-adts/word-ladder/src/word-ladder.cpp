@@ -13,6 +13,7 @@ using namespace std;
 #include "simpio.h"
 #include "queue.h"
 #include "vector.h"
+#include "stack.h"
 
 static string getWord(const Lexicon& english, const string& prompt) {
     while (true) {
@@ -31,10 +32,25 @@ static void generateLadder(const Lexicon& english, const string& start, const st
     }
 
     Queue<Vector<string>> queue;
+    Stack<string> result;
+    result.push(start);
     Vector<string> middle_result;
     middle_result.push_back(start);
     queue.enqueue((middle_result));
 
+    while (!queue.isEmpty()) {
+        Vector<string> front = queue.dequeue();
+        for (string& str : front) {
+
+
+            if (str == end) {
+                return;
+            }
+
+        }
+
+
+    }
 
 
 }
