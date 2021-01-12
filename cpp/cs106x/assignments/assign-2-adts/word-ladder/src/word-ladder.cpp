@@ -14,6 +14,7 @@ using namespace std;
 #include "queue.h"
 #include "vector.h"
 #include "stack.h"
+#include "set.h"
 
 static string getWord(const Lexicon& english, const string& prompt) {
     while (true) {
@@ -22,6 +23,24 @@ static string getWord(const Lexicon& english, const string& prompt) {
         cout << "Your response needs to be an English word, so please try again." << endl;
     }
 }
+
+static void generateNeighborWords(const Lexicon& english, const string& top, Set<string> used_words, Vector<string>& neighbors) {
+    for (int i = 0; i < 26; i++) {
+        char c = i + 'a';
+        // cout << c << endl;
+        for (int j = 0; j < top.size(); j++) {
+
+            string neighbor = top;
+            neighbor[j] = c;
+            if (english.contains(neighbor) && !used_words.contains(neighbor)) {
+                // this neighbor is a valid word and it has not been used before
+                neighbors.push_back(neighbor);
+            }
+
+        }
+    }
+}
+
 
 //static void generateValideNeighbor
 static void generateLadder(const Lexicon& english, const string& start, const string& end) {
@@ -38,22 +57,37 @@ static void generateLadder(const Lexicon& english, const string& start, const st
     middle_result.push_back(start);
     queue.enqueue((middle_result));
 
+    Set<string> used_words;
+    used_words.add(start);
+
     while (!queue.isEmpty()) {
         Vector<string> front = queue.dequeue();
-        for (string& str : front) {
-
-
-            if (str == end) {
-                return;
+        int size = front.size();
+        string top = front[size-1];
+        if (top == end) {
+            cout << "We found a solution:" << endl;
+            for (string& str : front) {
+                cout << str << " ";
             }
-
+            cout << endl;
+            return;
+        } else {
+            // top word not equal to end word, we extend the ladder.
+            Vector<string> neighbors;
+            generateNeighborWords(english, top, used_words, neighbors);
+            for (string & neighbor : neighbors) {
+                Vector<string> partial_ladder = front;
+                partial_ladder.push_back(neighbor);
+                used_words.add(neighbor);
+                queue.enqueue(partial_ladder);
+            }
         }
 
-
     }
-
-
 }
+
+
+
 
 static const string kEnglishLanguageDatafile = "dictionary.txt";
 static void playWordLadder() {
